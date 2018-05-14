@@ -1,0 +1,36 @@
+{
+  "packages": [
+    {
+      "name": "TINAH",
+      "platforms": [
+        {
+          "name": "TINAH",
+          "architecture": "avr",
+          "category": "Contributed",
+          "help": {
+			"online": "https://projectlab.engphys.ubc.ca/enph253_2018/tinah-2018/"
+          },
+          "version": "0.1.0",
+          "url": "https://ENPH253.github.io/arduino-tinah/arduino-tinah-0.1.0.zip",
+          "archiveFileName": "arduino-tinah-0.1.0.zip",
+          "boards": [
+            {"name": "TINAH"}
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "arduino",
+              "name": "avr-gcc",
+              "version": "4.9.2-atmel3.5.4-arduino2"
+            },
+            {
+              "packager": "arduino",
+              "name": "avrdude",
+              "version": "6.3.0-arduino9"
+            }
+          ]
+        }
+      ],
+      "tools":[]
+    }
+  ]
+} 
