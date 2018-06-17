@@ -1,26 +1,21 @@
-/*
- pins_arduino.h - Pin definition functions for Arduino ATmega128
- Part of Arduino - http://blog.csdn.net/canyue102/article/details/9451771
- 
-Copyright (c) 2013 Dongyu_canyue102
- 
-This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 2.1 of the License, or (at your option) any later version.
- 
-*/
- 
-#ifndef Pins_Arduino_h
-#define Pins_Arduino_h
- 
+#ifndef PINS_ARDUINO_H
+#define PINS_ARDUINO_H
+
+
 #include <avr/pgmspace.h>
- 
-#define NUM_DIGITAL_PINS 53
-#define NUM_ANALOG_INPUTS 8
-#define analogInputToDigitalPin(p) ((p < 8) ? (p) + 45 : -1)
-#define digitalPinHasPWM(p) (((p) >= 12 && (p) <= 15) || ((p) >= 35 && (p)<= 37))
- 
+
+#if !(defined(__AVR_ATmega64__) || defined(__AVR_ATmega128__))
+#error "Can't use this variant with anything other than an ATMega128"
+#endif
+
+#define NUM_DIGITAL_PINS            53
+#define NUM_ANALOG_INPUTS           8
+#define EXTERNAL_NUM_INTERRUPTS     4
+#define analogInputToDigitalPin(p) (((p) < 8) ? (p) + 45 : -1)
+#define analogPinToChannel(p)      ((p) < NUM_ANALOG_INPUTS ? (p) : (p) >= 45 ? (p) - 45 : -1)
+#define digitalPinHasPWM(p)        (((p) >= 12 && (p) <= 15) || ((p) >= 35 && (p)<= 37))
+#define digitalPinToInterrupt(p)   (((p) >= 3 && (p) <= 0) ? (p) : NOT_AN_INTERRUPT)
+
 static const uint8_t SS = 8;
 static const uint8_t MOSI = 10;
 static const uint8_t MISO = 11;
@@ -38,30 +33,8 @@ static const uint8_t A4 = 44;
 static const uint8_t A5 = 45;
 static const uint8_t A6 = 46;
 static const uint8_t A7 = 47;
- 
-// A majority of the pins are NOT PCINTs, SO BE WARNED (i.e. you cannot use them as receive pins)
-// Only pins available for RECEIVE (TRANSMIT can be on any pin):
-// (I've deliberately left out pin mapping to the Hardware USARTs - seems senseless to me)
-// Pins: 0-53
- 
-#define digitalPinToPCICR(p) (((p) >= 0 && (p) <= 53) ? (&PCICR) : ((uint8_t *)0))
- 
-#define digitalPinToPCICRbit(p) ( (((p) >= 0) && ((p) <= 7)) || (((p) >= 8) && ((p) <=47 )) ? 0 : \
- ( (((p) >= 48) && ((p) <= 52)) ? 2 : \
- 0 ) )
- 
-#define digitalPinToPCMSK(p) ( (((p) >= 0) && ((p) <= 7)) || (((p) >= 8) && ((p) <= 47)) ? (&PCMSK0) : \
- ( (((p) >= 48) && ((p) <= 52)) ? (&PCMSK2) : \
- ((uint8_t *)0) ) )
- 
-#define digitalPinToPCMSKbit(p) ( (((p) >= 0) && ((p) <= 7)) ? ((p) - 6) : \
- ( ((p) == 8) ? 3 : \
- ( ((p) == 9) ? 2 : \
- ( ((p) == 10) ? 1 : \
- ( ((p) == 11) ? 0 : \
- ( (((p) >= 12) && ((p) <= 52)) ? ((p) - 12) : \
- 0 ) ) ) ) ) )
- 
+
+
 #ifdef ARDUINO_MAIN
  
 const uint16_t PROGMEM port_to_mode_PGM[] = {
@@ -276,55 +249,8 @@ NOT_ON_TIMER   , // PG 3 ** 51 ** D41
 NOT_ON_TIMER   , // PG 4 ** 52 ** D41
 
 
-
-/* NOT_ON_TIMER , // PA 0 ** 22 ** D22
- NOT_ON_TIMER , // PA 1 ** 23 ** D23
- NOT_ON_TIMER , // PA 2 ** 24 ** D24
- NOT_ON_TIMER , // PA 3 ** 25 ** D25
- NOT_ON_TIMER , // PA 4 ** 26 ** D26
- NOT_ON_TIMER , // PA 5 ** 27 ** D27
- NOT_ON_TIMER , // PA 6 ** 28 ** D28
- NOT_ON_TIMER , // PA 7 ** 29 ** D29
- NOT_ON_TIMER , // PB 0 ** 13 ** PWM13
- NOT_ON_TIMER , // PB 1 ** 50 ** SPI_MISO
- NOT_ON_TIMER , // PB 2 ** 51 *7* SPI_MOSI
- NOT_ON_TIMER , // PB 3 ** 52 ** SPI_SCK
- TIMER0A , // PB 4 ** 53 ** SPI_SS
- TIMER1A , // PB 5 ** 10 ** PWM10
- TIMER1B , // PB 6 ** 11 ** PWM11
- TIMER2A , // PB 7 ** 12 ** PWM12
- NOT_ON_TIMER , // PC 0 ** 30 ** D30
- NOT_ON_TIMER , // PC 1 ** 31 ** D31
- NOT_ON_TIMER , // PC 2 ** 32 ** D32
- NOT_ON_TIMER , // PC 3 ** 33 ** D33
- NOT_ON_TIMER , // PC 4 ** 34 ** D34
- NOT_ON_TIMER , // PC 5 ** 35 ** D35
- NOT_ON_TIMER , // PC 6 ** 36 ** D36
- NOT_ON_TIMER , // PC 7 ** 37 ** D37
- NOT_ON_TIMER , // PD 0 ** 18 ** USART1_TX
- NOT_ON_TIMER , // PD 1 ** 19 ** USART1_RX
- NOT_ON_TIMER , // PD 2 ** 20 ** I2C_SDA
- NOT_ON_TIMER , // PD 3 ** 21 ** I2C_SCL
- NOT_ON_TIMER , // PD 4 ** 19 ** USART1_RX
- NOT_ON_TIMER , // PD 5 ** 20 ** I2C_SDA
- NOT_ON_TIMER , // PD 6 ** 21 ** I2C_SCL
- NOT_ON_TIMER , // PD 7 ** 21 ** I2C_SCL
- NOT_ON_TIMER , // PE 0 ** 0 ** USART0_RX
- NOT_ON_TIMER , // PE 1 ** 1 ** USART0_TX
- NOT_ON_TIMER , // PE 2 ** 2 ** PWM2
- TIMER3A , // PE 3 ** 3 ** PWM3
- TIMER3B , // PE 4 ** 0 ** USART0_RX
- TIMER3C , // PE 5 ** 1 ** USART0_TX
- NOT_ON_TIMER , // PE 6 ** 2 ** PWM2
- NOT_ON_TIMER , // PE 7 ** 3 ** PWM3
- NOT_ON_TIMER , // PG 0 ** 39 ** D39
- NOT_ON_TIMER , // PG 1 ** 40 ** D40
- NOT_ON_TIMER , // PG 2 ** 41 ** D41
- NOT_ON_TIMER , // PG 3 ** 4 ** PWM4
- NOT_ON_TIMER , // PG 4 ** 41 ** D41
-*/
 };
  
 #endif
- 
+
 #endif
