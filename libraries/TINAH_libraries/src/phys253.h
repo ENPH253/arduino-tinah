@@ -8,7 +8,7 @@
 
 #include <Arduino.h>
 #include <phys253pins.h>
-#include <LiquidCrystal.h>
+#include <TINAH/BufferedLCD.h>
 #include <motor.h>
 #include <phys253pins.h>
 //#include <Tone.cpp>
@@ -17,20 +17,20 @@
 
 
 /* Displays an error when TINAH is not selected as the board */
-// #if !defined(__AVR_ATmega128__) 
+// #if !defined(__AVR_ATmega128__)
 // 	#error Oops!  Make sure you have 'TINAH Board - UBC Engineering Physics 253' selected from the 'Tools -> Boards' menu.
 // #endif;
 
 
 //setup the variables and classes used throughout phys 253.
 
-extern LiquidCrystal LCD;
+extern TINAH::BufferedLCD LCD;
 
 
 extern motorClass motor ;
 
 extern ServoTINAH RCServo0;    // declare variables for up to eight servos.   Replaced old Servo253 implementation 2015Jan2
-extern ServoTINAH RCServo1; 
+extern ServoTINAH RCServo1;
 extern ServoTINAH RCServo2;
 
 
