@@ -27,11 +27,9 @@
 
 using namespace TINAH;
 
-BufferedLCD::BufferedLCD(bool deferUpdates, bool useBusyFlag) :
-	deferUpdates(deferUpdates),
-	useBusyFlag(useBusyFlag) {};
-
-void BufferedLCD::begin() {
+void BufferedLCD::begin(bool deferUpdates, bool useBusyFlag) {
+	this->deferUpdates = deferUpdates;
+	this->useBusyFlag = useBusyFlag;
 	hd44780_init(HD44780_MODE_2_LINE | HD44780_MODE_5X8);
 	sendCommand(HD44780_DISP_CTRL_COMMAND | HD44780_DISP_CTRL_DISPLAY_ON);
 	sendCommand(HD44780_SET_CURSOR_COMMAND);
@@ -76,15 +74,11 @@ size_t BufferedLCD::write(uint8_t data) {
 	}
 	else if (data == '\n') {
 		deferredReturn = false;
-		Serial.println("---");
-		Serial.print("cursorAddr: "); Serial.println(cursorAddr);
 		uint8_t lineEnd = (cursorAddr - cursorAddr % rowStride) + cols;
-		Serial.print("lineEnd: "); Serial.println(lineEnd);
 		while (cursorAddr < lineEnd) {
 			putChar(' ');
 		}
 		cursorAddr = (cursorAddr + rowStride - cursorAddr % rowStride) % (rows * rowStride);
-		Serial.print("cursorAddr: "); Serial.println(cursorAddr);
 	}
 	else {
 		if (deferredReturn) {
@@ -96,7 +90,6 @@ size_t BufferedLCD::write(uint8_t data) {
 		}
 		putChar(data);
 	}
-	updateIncremental();
 	return 1;
 }
 
@@ -147,7 +140,6 @@ bool BufferedLCD::busy() {
 	}
 }
 
-
 bool BufferedLCD::updateIncremental() {
 	if (!deferUpdates) return false;
 	for (int i = 0; i < rows * cols; i++) {
@@ -157,6 +149,10 @@ bool BufferedLCD::updateIncremental() {
 				sendData(buffer[updateAddr]);
 				screenContents[updateAddr] = buffer[updateAddr];
 				screenAddr++;
+				updateAddr++;
+				if (updateAddr % rowStride >= cols) {
+					updateAddr = (updateAddr + rowStride - updateAddr % rowStride) % (rows * rowStride);
+				}
 				return true;
 			}
 			else {
@@ -188,7 +184,7 @@ void BufferedLCD::loadCustomCharacter(uint8_t index, const uint8_t pixelData[8])
 	screenAddr = 0xFF;
 }
 
-void BufferedLCD::loadCustomCharacter_P(uint8_t index, const uint8_t progmemPixelData[8]) {
+void BufferedLCD::loadCustomCharacterProgmem(uint8_t index, const uint8_t progmemPixelData[8]) {
 	uint8_t ramCopy[8];
 	for (int i = 0; i < 8; i++) {
 		ramCopy[i] = pgm_read_byte(&(progmemPixelData[i]));

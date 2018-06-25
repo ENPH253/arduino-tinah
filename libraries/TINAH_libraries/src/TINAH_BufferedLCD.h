@@ -35,7 +35,16 @@ namespace TINAH {
 class BufferedLCD : public Print {
 public:
 	/**
-	 * @brief Constructor for BufferedLCD.
+	 * @brief Constructor for BufferedLCD. @ref begin still must be called
+	 * to initialize this class and the display.
+	 *
+	 * @note It only makes sense to have one BufferedLCD, usually as a global
+	 * object.
+	 */
+	BufferedLCD() = default;
+
+	/**
+	 * @brief Initializes the LCD.
 	 *
 	 * @param deferUpdates If true, calling write will return quickly, but
 	 * characters may not be sent immediately if the controller is busy.
@@ -49,15 +58,12 @@ public:
 	 * controller instead. Enabling this option is typically twice as fast as
 	 * not enabling.
 	 *
-	 * @note It only makes sense to have one of these, most likely as a global
-	 * object.
+	 * If useBusyFlag is enabled without deferUpdates, and the display is
+	 * removed, the code will be stuck in a loop waiting for the controller to
+	 * signal it is ready, but can be worked around by putting a pulldown
+	 * resistor on the most significant bit of the data pins.
 	 */
-	BufferedLCD(bool deferUpdates = false, bool useBusyFlag = false);
-
-	/**
-	 * @brief Initializes the LCD.
-	 */
-	void begin();
+	void begin(bool deferUpdates = false, bool useBusyFlag = false);
 
 	/**
 	 * @brief Don't use this. For compatibility with LiquidCrystal, but the
@@ -65,7 +71,7 @@ public:
 	 * below.
 	 */
 	inline void begin(int, int) {
-		begin();
+		begin(false, false);
 	}
 
 	/**
@@ -148,12 +154,7 @@ public:
 	 *     0b00000
 	 * }
 	 * LCD.loadCustomCharacter(0, B);
-	 * LCD.print("Li");
-	 * LCD.write(0);
-	 * LCD.print("uid");
-	 * LCD.print(" Cry");
-	 * LCD.write(0);
-	 * LCD.print("tal");
+	 * LCD.print("Li\10uid Cry\10tal");
 	 */
 	void loadCustomCharacter(uint8_t index, const uint8_t pixelData[8]);
 
@@ -179,15 +180,10 @@ public:
 	 *     0b11111,
 	 *     0b00000
 	 * }
-	 * LCD.loadCustomCharacter_P(0, B);
-	 * LCD.print(F("Li"));
-	 * LCD.write(0);
-	 * LCD.print(F("uid");
-	 * LCD.print(F(" Cry");
-	 * LCD.write(0);
-	 * LCD.print(F("tal");
+	 * LCD.loadCustomCharacterProgmem(0, B);
+	 * LCD.print(F("Li\10uid Cry\10tal"));
 	 */
-	void loadCustomCharacter_P(uint8_t index, const uint8_t progmemPixelData[8]);
+	void loadCustomCharacterProgmem(uint8_t index, const uint8_t progmemPixelData[8]);
 
 private:
 	static constexpr uint8_t defaultDelay = 50;
@@ -195,8 +191,8 @@ private:
 	static constexpr uint8_t rows = 2;
 	static constexpr uint8_t cols = 16;
 
-	const bool useBusyFlag;
-	const bool deferUpdates;
+	bool useBusyFlag;
+	bool deferUpdates;
 
 	bool deferredReturn;
 	uint8_t cursorAddr;

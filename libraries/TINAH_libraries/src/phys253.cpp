@@ -3,7 +3,8 @@
 #include "motor.h"
 
 
-TINAH::BufferedLCD LCD(false, false);
+__attribute__ ((weak))
+TINAH::BufferedLCD LCD;
 
 
 motorClass motor ;
