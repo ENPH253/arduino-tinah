@@ -9,9 +9,9 @@ TINAH::BufferedLCD LCD;
 
 motorClass motor ;
 
-TINAH::Servo RCServo0;    // declare variables for up to eight servos.   Replaced old Servo253 implementation 2015Jan2
-TINAH::Servo RCServo1;
-TINAH::Servo RCServo2;
+TINAH::Servo RCServo0(RCServo0Output);    // declare variables for up to eight servos.   Replaced old Servo253 implementation 2015Jan2
+TINAH::Servo RCServo1(RCServo1Output);
+TINAH::Servo RCServo2(RCServo2Output);
 
 int knob(int value) 		{ return analogRead(knobInput[value]) ;}
 void buzzer	(int value) { return ;} //   pulseOut(buzzerOutput, value*2) ;}

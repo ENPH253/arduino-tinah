@@ -12,8 +12,9 @@ namespace TINAH {
 class Servo
 {
 public:
-	Servo();
+	Servo(uint8_t pin = 0xFF);
 	uint8_t attach(uint8_t);
+	uint8_t attach(void);
 	void detach(void);
 	bool attached(void);
 	void write(uint16_t);
