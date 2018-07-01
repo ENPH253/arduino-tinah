@@ -8,11 +8,11 @@
 
 #include <Arduino.h>
 #include <phys253pins.h>
-#include <TINAH/BufferedLCD.h>
+#include <TINAH_BufferedLCD.h>
 #include <motor.h>
 #include <phys253pins.h>
 //#include <Tone.cpp>
-#include <ServoTINAH.h>
+#include <TINAH_Servo.h>
 
 
 
@@ -29,9 +29,9 @@ extern TINAH::BufferedLCD LCD;
 
 extern motorClass motor ;
 
-extern ServoTINAH RCServo0;    // declare variables for up to eight servos.   Replaced old Servo253 implementation 2015Jan2
-extern ServoTINAH RCServo1;
-extern ServoTINAH RCServo2;
+extern TINAH::Servo RCServo0;    // declare variables for up to eight servos.   Replaced old Servo253 implementation 2015Jan2
+extern TINAH::Servo RCServo1;
+extern TINAH::Servo RCServo2;
 
 
 int knob(int value) ;	//	{ return analogRead(knobInput[value]) ;}

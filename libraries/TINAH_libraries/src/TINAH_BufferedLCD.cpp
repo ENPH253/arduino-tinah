@@ -21,7 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "BufferedLCD.h"
+#include "TINAH_BufferedLCD.h"
 #include <Arduino.h>
 #include <hd44780.h>
 
