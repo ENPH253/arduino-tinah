@@ -113,11 +113,6 @@ void Servo::write(uint16_t angle)
     servo[this->channel].compareValue         = timerValue % 0xFF;
 }
 
-uint16_t Servo::read(void)
-{
-    return servo[this->channel].angle;
-}
-
 }
 
 ISR (TIMER2_OVF_vect)
