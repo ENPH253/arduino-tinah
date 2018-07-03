@@ -1,32 +1,40 @@
 #include "TINAH_HBridge.h"
+#include "TINAH_Pins.h"
 #include <Arduino.h>
 
 using namespace TINAH;
 
+#define lengthof(ARR) (sizeof(ARR) / sizeof(decltype(ARR[0])))
+static_assert(lengthof(pins::hBridgeDirection) == HBridge::numChannels, 
+	"Wrong number of direction pins");
+static_assert(lengthof(pins::hBridgeEnable) == HBridge::numChannels, 
+	"Wrong number of enable pins");
 
-constexpr uint8_t HBridge::directionPins[numChannels] = { 24, 25, 38, 39 };
-constexpr uint8_t HBridge::enablePins[numChannels] = { 29, 30, 36, 37 };
+HBridge::HBridge(uint8_t channel) :
+	directionPin(pins::hBridgeDirection[channel]),
+	enablePin(pins::hBridgeEnable[channel]) 
+{
+	init();
+}
 
 void HBridge::init() {
+	pinMode(directionPin, OUTPUT);
+	pinMode(enablePin, OUTPUT);
+	off();
+}
+
+void HBridge::setOutput(int16_t outputLevel) {
+	uint8_t dutyCycle = (abs(outputLevel) > 255) ? 255 : abs(outputLevel);
+	digitalWrite(directionPin, outputLevel < 0 ? LOW : HIGH);
+	analogWrite(enablePin, dutyCycle);
+}
+
+void HBridge::off() {
+	setOutput(0);
+}
+
+void HBridge::allOff() {
 	for (int i = 0; i < numChannels; i++) {
-		pinMode(directionPins[i], OUTPUT);
-		pinMode(enablePins[i], OUTPUT);
-	}
-	stopAll();
-}
-
-void HBridge::setOutput(uint8_t channel, int16_t output) {
-	uint8_t dutyCycle = (abs(output) > 255) ? 255 : abs(output);
-	digitalWrite(directionPins[channel], output < 0 ? LOW : HIGH);
-	analogWrite(enablePins[channel], dutyCycle);
-}
-
-void HBridge::stop(uint8_t channel) {
-	setOutput(channel, 0);
-}
-
-void HBridge::stopAll() {
-	for (int i = 0; i < numChannels; i++) {
-		stop(i);
+		digitalWrite(pins::hBridgeEnable[i], LOW);
 	}
 }

@@ -29,35 +29,50 @@ namespace TINAH {
 
 class HBridge {
 public:
-	static constexpr uint8_t numChannels = 4;
+
 	/**
-	 * @brief Initializes the output pin directions and turns off the H-bridges.
+	 * @brief The total number of H-bridge outputs available on the TINAH.
 	 */
-	static void init();
+	static constexpr uint8_t numChannels = 4;
+
+	/**
+	 * @brief Constructs an H-bridge object for the given channel.
+	 * 
+	 * Sets the control pins for the H-bridge to output and turns off the
+	 * H-bridge.
+	 * 
+	 * @param channel Should be less than @ref numChannels.
+	 */
+	HBridge(uint8_t channel);
+
+	/**
+	 * Sets the control pins for the H-bridge to output and turns off the
+	 * H-bridge.
+	 */
+	void init();
 
 	/**
 	 * @brief Sets the output duty cycle and direction for an H-bridge.
 	 *
-	 * @param channel The output channel to control, must be less than
-	 * numChannels.
-	 * @param output The duty cycle to output. 0 is off, 255 is full duty cycle
-	 * in one direction, and -255 is full duty cycle in the other direction.
+	 * @param outputLevel The duty cycle to output. 0 is off, 255 is full duty 
+	 * cycle in one direction, and -255 is full duty cycle in the other 
+	 * direction.
 	 */
-	static void setOutput(uint8_t channel, int16_t output);
+	void setOutput(int16_t outputLevel);
 
 	/**
 	 * @brief Turs off the output on the given channel.
 	 */
-	static void stop(uint8_t channel);
+	void off();
 
 	/**
 	 * @brief Turns off all channels.
 	 */
-	static void stopAll();
+	static void allOff();
 
 private:
-	static const uint8_t directionPins[numChannels];
-	static const uint8_t enablePins[numChannels];
+	const uint8_t directionPin;
+	const uint8_t enablePin;
 };
 
 }
