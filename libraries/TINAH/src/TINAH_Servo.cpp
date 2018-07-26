@@ -107,8 +107,8 @@ bool Servo::attached(void)
 void Servo::write(uint16_t angle)
 {
     if (!attached()) attach();
-    int16_t timerValue = pgm_read_word(&ANGLE_TO_TIMER[servo[this->channel].angle]);
     servo[this->channel].angle                = angle > MAX_SERVO_ANGLE ? MAX_SERVO_ANGLE : angle;
+    int16_t timerValue = pgm_read_word(&ANGLE_TO_TIMER[servo[this->channel].angle]);
     servo[this->channel].overflowBeforeToggle = timerValue >= 0xFF;
     servo[this->channel].compareValue         = timerValue % 0xFF;
 }
