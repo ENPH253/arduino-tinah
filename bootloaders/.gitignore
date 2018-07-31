@@ -1,0 +1,6 @@
+*.o
+*.eep
+*.elf
+*.lss
+*.map
+build/dep

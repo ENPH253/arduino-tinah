@@ -16,7 +16,9 @@ TINAH.bootloader.tool=avrdude
 TINAH.bootloader.unlock_bits=0x3f
 TINAH.bootloader.lock_bits=0x0f
 TINAH.bootloader.low_fuses=0xFF
-TINAH.bootloader.high_fuses=0xDA
+TINAH.bootloader.high_fuses=0xD8
+TINAH.bootloader.extended_fuses=0xFF
+TINAH.bootloader.file=build/TINAHBoot.hex
 
 TINAH.build.core=MCUdude_corefiles
 TINAH.build.variant=TINAHvariant
